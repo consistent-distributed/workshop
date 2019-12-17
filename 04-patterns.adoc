@@ -1,7 +1,7 @@
 = Implementation patterns
 
 application events
-  - pros & cons
+- pros & cons
 
 event sourcing & CQRS
-  - pros & cons
+- pros & cons
