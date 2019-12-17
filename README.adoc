@@ -1,5 +1,27 @@
 = Workshop -- data consistency in cloud-native applications
 
+This workshop is meant for enterprise developers to understand the concepts behind consistent data and consistent transactions in distributed systems, the facts they have to deal with, and recipes as well as examples to implement them.
+It will include video course episodes, example code, and Katacoda projects.
+
+We plan to fetch enterprise developers from where they (typically) are:
+
+- plain "sync" HTTP communication
+- single, ACID relational databases
+
+== What they will understand afterward
+
+- how a lot of "consistent" systems are actually eventually consistent
+- why we need to deal with asynchronous communication and eventual consistency
+- reliable eventual consistency
+- "effectively once" transactions, idempotent actions
+- Sagas, distributed business use case transactions
+- dealing with consistency as part of the use cases
+
+== Technology focus
+- enterprise Java
+- cloud-native applications
+- containerized environments
+
 
 == Agenda
 
