@@ -21,20 +21,20 @@
 
 === link:03-maintaining-consistency.adoc[Maintaining (eventual) consistency]
 
-- distributed business use case transactions
-  * splitting long-running transactions into smaller parts
-  * Sagas
-- not losing actions or state
-  * dealing with consistency
-  * "effectively once" transactions, idempotent actions
+* distributed business use case transactions
+** splitting long-running transactions into smaller parts
+** Sagas
+* not losing actions or state
+** dealing with consistency
+** "effectively once" transactions, idempotent actions
 
 
 === link:04-patterns.adoc[Implementation patterns]
 
-- application events
-  * pros & cons
-- event sourcing & CQRS
-  * pros & cons
+* application events
+** pros & cons
+* event sourcing & CQRS
+** pros & cons
 
 
 === link:05-recipes.adoc[Implementation recipes]
@@ -50,13 +50,13 @@
 
 === Example technologies / example code
 
-- Quarkus, CDI, JMS
-- Vert.x
-- Reactive Streams, Events
-- Messaging solutions
-  * Kafka
-  * AMQP / IBM MQ
-  * Pulsar
-- example project / Katacoda
-  * coffee-shop example
-  * distributing and scaling application
+* Quarkus, CDI, JMS
+* Vert.x
+* Reactive Streams, Events
+* Messaging solutions
+** Kafka
+** AMQP / IBM MQ
+** Pulsar
+* example project / Katacoda
+** coffee-shop example
+** distributing and scaling application
