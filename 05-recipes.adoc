@@ -1,0 +1,6 @@
+= Implementation recipes
+
+- persistent queue and fail-over
+- pub/sub
+- Change Data Capture (CDC), transaction log, outbox pattern
+- idempotent consumers

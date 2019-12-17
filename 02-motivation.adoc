@@ -1,0 +1,6 @@
+= Motivation for asynchronous communication and eventual consistency
+
+- distributed systems, distributed transactions
+- data growth
+- scalability, on database side
+- connection to real world (collaboration required, trust on outdated information, compensating use cases)

@@ -1,0 +1,5 @@
+= Reliable communication
+
+- data consistency, transactions, how "consistent" systems are actually eventually consistent
+- HTTP, timeouts, networking fallacies
+- distributed systems, distributed transactions

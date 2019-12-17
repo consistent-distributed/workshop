@@ -1,0 +1,13 @@
+= Maintaining (eventual) consistency
+
+
+distributed business use case transactions
+
+- splitting long-running transactions into smaller parts
+- Sagas
+
+
+not losing actions or state
+
+- dealing with consistency
+- "effectively once" transactions, idempotent actions

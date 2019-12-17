@@ -1,0 +1,49 @@
+= Workshop -- data consistency in cloud-native applications
+
+
+== Agenda
+
+=== link:01-reliable-communication.adoc[Reliable communication]
+  - data consistency, transactions, how "consistent" systems are actually eventually consistent
+  - HTTP, timeouts, networking fallacies
+  - distributed systems, distributed transactions
+
+=== link:02-motivation.adoc[Motivation for asynchronous communication and eventual consistency]
+  - distributed systems, distributed transactions
+  - data growth
+  - scalability, on database side
+  - connection to real world (collaboration required, trust on outdated information, compensating use cases)
+
+=== link:03-maintaining-consistency.adoc[Maintaining (eventual) consistency]
+  - distributed business use case transactions
+    - splitting long-running transactions into smaller parts
+    - Sagas
+  - not losing actions or state
+    - dealing with consistency
+    - "effectively once" transactions, idempotent actions
+
+=== link:04-patterns.adoc[Implementation patterns]
+  - application events
+    - pros & cons
+  - event sourcing & CQRS
+    - pros & cons
+
+=== link:05-recipes.adoc[Implementation recipes]
+  - persistent queue and fail-over
+  - pub/sub
+  - Change Data Capture (CDC), transaction log, outbox pattern
+  - idempotent consumers
+
+=== link:06-integrating-legacy.adoc[Integrating legacy in EDA]
+
+=== Example technologies / example code
+  - Quarkus, CDI, JMS
+  - Vert.x
+  - Reactive Streams, Events
+  - Messaging solutions
+    - Kafka
+    - AMQP / IBM MQ
+    - Pulsar
+  - example project / Katacoda
+    - coffee-shop example
+    - distributing and scaling application
