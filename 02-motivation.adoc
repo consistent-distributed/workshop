@@ -1,6 +1,19 @@
 = Motivation for asynchronous communication and eventual consistency
 
-- distributed systems, distributed transactions
-- data growth
-- scalability, on database side
-- connection to real world (collaboration required, trust on outdated information, compensating use cases)
+Contents: From what has been discussed in the previous part, make people aware of the driving forces behind asynchronous communication and eventual consistency.
+
+
+== distributed system, distributed transactions
+- as seen, communication within distributed systems can be a motivation to loosen up consistency requirements
+
+== data growth
+- data unable to fit into a single database instance
+- need to scale databases
+
+== scalability, on database side
+- requirement to provision multiple database instances to accommodate load
+- need to scale databases
+
+== connection to real world (collaboration required, trust on outdated information, compensating use cases)
+- explanation how the real world is eventually consistent
+- building systems that solve real-world use cases might also require to take into account eventual consistency

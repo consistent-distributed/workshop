@@ -1,5 +1,33 @@
 = Reliable communication
 
-- data consistency, transactions, how "consistent" systems are actually eventually consistent
-- HTTP, timeouts, networking fallacies
-- distributed systems, distributed transactions
+Contents: Start from where developers are (synchronous HTTP, make them understand what does it mean to communicate reliably in distributed applications).
+
+
+== data consistency, transactions
+- changing state in a remote system that is accessed by multiple clients
+- need for synchronization, usually in transactional contexts that involve relational databases (ACID, atomic, all-or-nothing)
+- synchronous communication between client/server and server/database
+- immediate feedback whether action succeeded after server sent response
+
+
+== how "consistent" systems are actually eventually consistent
+- synchronous HTTP
+- timeout dilemma
+- networking fallacies
+- race conditions, lost updates
+
+
+== distributed systems, distributed transactions, CAP theorem
+- synchronous communication between more than just one backend system (e.g. microservice architecture)
+- all applications have to successfully perform the desired action (maintaining all-or-nothing consistency across the applications)
+- CAP (consistency, availability, network partition tolerance) theorem, it's either consistency or availability, since the network can partition
+- blocking, scalability, outcome dilemma
+- typically 2-phase-commit transactions
+- -> not perfect solution
+
+
+== Eventual consistency
+- as seen, distributed transactions doen't work well in distributed systems
+- giving up parts of strong consistency requirements in favor of availability (scalability) according to CAP
+- eventual consistency that guarantees that "eventually" the overall system state will be consistent
+- still consistency requirements in order to guarantee a successful outcome
