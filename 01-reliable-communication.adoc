@@ -3,11 +3,13 @@
 Contents: Start from where developers are (synchronous HTTP, make them understand what does it mean to communicate reliably in distributed applications).
 
 
-== data consistency, transactions
-- changing state in a remote system that is accessed by multiple clients
-- need for synchronization, usually in transactional contexts that involve relational databases (ACID, atomic, all-or-nothing)
-- synchronous communication between client/server and server/database
-- immediate feedback whether action succeeded after server sent response
+== Data consistency &amp; transactions
+- changing state in a remote system that is accessed by multiple users, that is clients
+- need for synchronization, usually in transactional contexts that involve relational databases which support ACID transactions in an atomic, all-or-nothing fashion
+- traditional systems communicate synchronously between client and server and between server and database
+- this synchronous communication gives immediate feedback whether the action succeeded, after the server sent the response to the client
+- if the transaction collides with another transaction that attempts to modify the same contents (depending on the locking strategy and isolation level), the second transaction aborts and is rolled-back
+- in any way, the data stays consistent as a whole
 
 
 == how "consistent" systems are actually eventually consistent
