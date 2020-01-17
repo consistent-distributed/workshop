@@ -1,0 +1,77 @@
+# A gentle introduction to distributed systems
+
+The computer era started in 1945. In the mid-80s, _high-speed_ computer networks began to emerge. 
+Hundreds, even thousands, of machines could be connected and start exchanging information.
+It was almost the beginning of something we, nowaday, call _the cloud_. 
+
+## Distributed system - a definition
+
+The are various definitions of distributed systems. 
+A. Tanenbaum gives the first definition we should consider in "Distributed Systems - Principles and Paradigms":
+
+[quote, A. Tanenbaum, Distributed Systems - Principles and Paradigms]
+A distributed system is a collection of independent computers that appears to its users as a single coherent system.
+
+The first significant word in this definition is _independant_. 
+It means that each machine is autonomous and so can be started and stopped independently to the other computer forming the system. 
+These machines operate concurrently and can fail independently without affecting the whole system's uptime (in theory). 
+This independence allows a high level of dynamism as resources, services and machines can come and go at any time. 
+
+A second important part of this definition is _coherent_. 
+It means that the distributed nature of the system should not be apparent to the user. 
+The system should act as a single computer. 
+
+There is a second definition of distributed systems that more or less explains the reason for this workshop. 
+Leslie Lamport has given this definition:
+
+[quote, L. Lamport]
+A distributed system is one in which the failure of a computer you didn't even know existed can render your own computer unusable.
+
+In other words, failures are an inherent component of distributed systems. 
+No matter how your system is built, it is going to fail.
+As a corollary, bigger is the distributed system, in terms of machines, higher the level of dynamism, and the chance of failure are.
+Building and maintaining distributed systems is a complex topic full of pitfalls and landmines.
+
+## Why, oh, why?
+
+Just because it's possible to build distributed systems does not necessarily mean that it is a good idea.
+So, what are the critical characteristics of a distributed system that make it so appealing to any software developers?
+
+### Sharing
+
+The first goal of distributed systems is about sharing. 
+Distributed systems are composed of machine exposing _services_. 
+These services are accessible to the rest of the distributed system. 
+So the service can be shared by several other machines of the system. 
+
+### Scalability
+
+With the development of the Internet, scalability has become one of the most important design goals for developers of distributed systems: being able to handle more users, more requests, more messages, or faster. 
+
+In the _cloudy_ world, we are living in; scalability tends to be replaced with elasticity.
+You can lease resources until you don't need them anymore. 
+So you can gracefully manage pick of loads without having to necessarily oversize your system. 
+
+### Evolution
+
+This last benefit has been the main reason behind the microservice wave. 
+Remember the first definition of distributed systems we gave above. 
+The independence of the component forming the distributed system allows them to evolve at its own pace.
+New releases can be deployed at any time adding new features and added value easily without having to orchestrate a complete restart.
+If everything goes smoothly, this update should be transparent for the rest of the system and the user. But that's the theory.
+
+## Fallacies of distributed systems
+
+Building software is hard. Building a distributed system is even harder.
+Peter Deutsch listed a few issues that need to be taken into account when implementing a distributed system that do not apply when building a non-distributed application:
+
+1. The network is not reliable - yes, you may loose messages, and you will need to recover from these failures
+2. The network is not secure - and you need to handle part of the security yourself
+3. The network is not homogeneous - machines are going to be different, they may even change
+4. The topology is changing - especially with the Cloud; you can't be sure that the number of resources, the set of services and the name of the services are not going to change at anytime
+5. Latency is not 0 - every call going across the network is going to be impacted by the latency of the network. Don't ignore this latency.
+6. The bandwidth is not infinite - it may even become a bottleneck.
+7. The transport cost is not 0 - sending a message over the network can be very expensive.
+8. There are many administrators - don't believe that you are in control of anything. 
+
+With this in mind, let's start the journey and discover how to build better distributed systems.
