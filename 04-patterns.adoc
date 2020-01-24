@@ -3,5 +3,31 @@
 application events
 - pros & cons
 
+== Interaction patterns
+
+publish/subscribe vs. 1 to 1
+
+== Elasticity patterns
+
+consumer-group based scaling (Kafka, Pulsar)
+
+== Resilience pattern
+
+Dead mailbox
+multiple subscriber - fail-over
+acknolwedgement and retry
+
+== Data and stage management patterns
+
 event sourcing & CQRS
 - pros & cons
+
+== Integration patterns
+
+CDC and Outbox pattern
+
+The role of EIP
+
+
+
+
