@@ -3,17 +3,27 @@
 Contents: From what has been discussed in the previous part, make people aware of the driving forces behind asynchronous communication and eventual consistency.
 
 
-== distributed system, distributed transactions
-- as seen, communication within distributed systems can be a motivation to loosen up consistency requirements
+== Distributed system, distributed transactions
 
-== data growth
-- data unable to fit into a single database instance
-- need to scale databases
+As we have seen, communication within distributed systems can be a motivation to loosen up consistency requirements.
+Systems, that as part of handling their use case need to involve multiple applications, may motivate us to give up strong consistency requirements in favor of availability.
 
-== scalability, on database side
+
+== Data growth
+
+If the data and usage of applications grow, it might not be able to fit into a single database instance, anymore, which causes us to scale databases horizontally.
+We can scale our instances by partitioning, or sharding the data, by certain criteria and store the parts in the available instances.
+It helps to look at the exact data growth of the application over time, that is how fast the overall storage size of the data grows, which allows us to calculate the future storage demands.
+
+
+== Scalability, on database side
+
 - requirement to provision multiple database instances to accommodate load
 - need to scale databases
 
+
 == connection to real world (collaboration required, trust on outdated information, compensating use cases)
+
 - explanation how the real world is eventually consistent
+- coffee shop example, ordering coffee while shop runs out of beans, time it takes until that information propagates
 - building systems that solve real-world use cases might also require to take into account eventual consistency
