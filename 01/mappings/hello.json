@@ -1,0 +1,91 @@
+{
+    "mappings": [
+      {
+        "request": {
+          "method": "GET",
+          "url": "/greeting"
+        },
+        "response": {
+          "status": 200,
+          "body": "hello"
+        }
+      },
+      {
+        "request": {
+          "url": "/delay"
+        },
+        "response": {
+          "status": 200,
+          "fixedDelayMilliseconds": 2000,
+          "body": "hello"
+        }
+      },
+      {
+        "request": {
+          "url": "/delay/random"
+        },
+        "response": {
+          "status": 200,
+          "delayDistribution": {
+            "type": "lognormal",
+            "median": 1000,
+            "sigma": 0.4
+          },
+          "body": "hello"
+        }
+      },
+      {
+        "request": {
+          "url": "/delay/response"
+        },
+        "response": {
+          "status": 200,
+          "chunkedDribbleDelay": {
+            "numberOfChunks": 3,
+            "totalDuration": 2000
+          },
+          "body": "hello"
+        }
+      },
+      {
+        "request": {
+          "url": "/fault/internal"
+        },
+        "response": {        
+          "status": 500
+        }
+      },
+      {
+        "request": {
+          "url": "/fault/malformed"
+        },
+        "response": {        
+          "fault": "MALFORMED_RESPONSE_CHUNK"
+       }
+      },
+      {
+        "request": {
+          "url": "/fault/empty"
+        },
+        "response": {        
+          "fault": "EMPTY_RESPONSE"
+       }
+      },
+      {
+        "request": {
+          "url": "/fault/random"
+        },
+        "response": {        
+          "fault": "RANDOM_DATA_THEN_CLOSE"
+       }
+      },
+      {
+        "request": {
+          "url": "/fault/reset"
+        },
+        "response": {        
+          "fault": "CONNECTION_RESET_BY_PEER"
+        }
+      }
+    ]
+  }

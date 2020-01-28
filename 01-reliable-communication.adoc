@@ -1,6 +1,192 @@
 = Reliable communication
 
-Contents: Start from where developers are (synchronous HTTP, make them understand what does it mean to communicate reliably in distributed applications).
+As soon as you start building a distributed application, with microservices or other techniques, you are quickly facing one of the fallacies mentioned in the previous chapter: the reliability of the network.
+Because you do most of your development on your machine, it's hard to realize that actually, things can go wrong, terribly wrong.
+
+== Error, Failures and Type of Failures
+
+A system is said to _fail_ when it cannot provide the services it was intended to do.
+For example, if an HTTP service cannot serve the request, the system _fails_.
+
+An _error_ is a part of a system's state that may lead to a _failure_. 
+The cause of an error is called a _fault_. 
+
+There are three types of _faults_:
+
+* _transient faults_ occur once and then disappear.
+* _intermittent faults_ occur, then vanish and then reappear. 
+* _permanent faults_ is one that continues to exist until the faulty component (software, or hardware) is fixed.
+
+These faults would produce different types of failures, from crashes (also known as fail-stop failures, a service stops working), to arbitrary failures (also known as Byzantine failures, a service produces unpredictable responses at random times). 
+
+== Exhibiting unreliability
+
+Let's take a simple example: an HTTP service just returning `hello`.
+You could implement this service with your favorite technical stack, but for this demonstration, we are going to use http://wiremock.org/[WireMock].
+WireMock lets you _mock_ HTTP API and simulate various types of faults.
+
+Download Wiremock (standalone) from https://repo1.maven.org/maven2/com/github/tomakehurst/wiremock-standalone/2.25.1/wiremock-standalone-2.25.1.jar[here].
+
+[NOTE]
+----
+You would need the `cURL` command-line tool
+----
+
+=== No service running
+
+Ok, let's start with a simple example.
+Imagine we _forgot_ to start the service.
+
+[source, shell]
+----
+❯ curl http://localhost:8080/greeting
+curl: (7) Failed to connect to localhost port 8080: Connection refused
+----
+
+That was expected.
+It's a `fail-stop` failure. 
+As the caller, we now that our request has not been handled.
+We can retry, but until the service is (re-)started, it won't work.
+So let's fix this.
+
+== Regular service
+
+Now that you have downloaded WireMock, launch it with:
+
+[source, shell]
+----
+❯ java -jar wiremock-standalone-2.25.1.jar --root-dir $WORKSHOP_ROOT/01
+ /$$      /$$ /$$                     /$$      /$$                     /$$
+| $$  /$ | $$|__/                    | $$$    /$$$                    | $$
+| $$ /$$$| $$ /$$  /$$$$$$   /$$$$$$ | $$$$  /$$$$  /$$$$$$   /$$$$$$$| $$   /$$
+| $$/$$ $$ $$| $$ /$$__  $$ /$$__  $$| $$ $$/$$ $$ /$$__  $$ /$$_____/| $$  /$$/
+| $$$$_  $$$$| $$| $$  \__/| $$$$$$$$| $$  $$$| $$| $$  \ $$| $$      | $$$$$$/
+| $$$/ \  $$$| $$| $$      | $$_____/| $$\  $ | $$| $$  | $$| $$      | $$_  $$
+| $$/   \  $$| $$| $$      |  $$$$$$$| $$ \/  | $$|  $$$$$$/|  $$$$$$$| $$ \  $$
+|__/     \__/|__/|__/       \_______/|__/     |__/ \______/  \_______/|__/  \__/
+
+port:                         8080
+enable-browser-proxying:      false
+disable-banner:               false
+no-request-journal:           false
+verbose:                      false
+----
+
+Then, let's retry our cURL command:
+
+[source, shell]
+----
+❯ curl http://localhost:8080/greeting
+hello
+----
+
+Much better!
+But it only means one thing; when everything works fine, our system works fine.
+
+== Latency
+
+In a real distributed system, things can get wrong.
+For example, you may see latency, slow responses, and so on.
+
+Accessing the `/delay` endpoint simulates a fixed delay.
+
+[source, shell]
+----
+❯ curl http://localhost:8080/delay
+hello
+----
+
+It still works, but it is much slower.
+Also, as you know, latency varies. 
+
+Call several times the following endpoint:
+[source, shell]
+----
+❯ curl http://localhost:8080/delay/random
+hello
+----
+
+You can see the response time fluctuation.
+Sometimes it's _good enough_; sometimes, it feels unresponsive.
+That's how any distributed system is going to behave in real life.
+
+As a caller/service consumer, what can you do?
+Adding a timeout or circuit breaker is tricky; what would be the right value? 
+Also, it's not because it's slow that your request has not been processed.
+So far, the service replies correctly.
+
+=== Facing faults
+
+But latency is just the first issue we need to handle. 
+Faults, due to software bugs or hardware issues, can also happen.
+
+Even simplest service can misbehave:
+[source, shell]
+----
+❯ curl http://localhost:8080/fault/internal -v
+* Trying ::1...
+* TCP_NODELAY set
+* Connected to localhost (::1) port 8080 (#0)
+> GET /fault/internal HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/7.64.1
+> Accept: */*
+>
+< HTTP/1.1 500 Server Error
+< Matched-Stub-Id: e9ace016-ecba-4b62-bcb2-30b7605eb363
+< Transfer-Encoding: chunked
+< Server: Jetty(9.2.z-SNAPSHOT)
+<
+* Connection #0 to host localhost left intact
+* Closing connection 0
+----
+
+In this case, that's simple.
+The service fails with an internal error; you can check the status in your code.
+You can also suppose it didn't process the request correctly (but you should verify).
+
+Other types of fault can be more problematic.
+Let's start by a service not writing anything in the response:
+
+[source, shell]
+----
+❯ curl http://localhost:8080/fault/empty
+curl: (52) Empty reply from server
+----
+
+The response is empty.
+So you can imagine adding an `if-then-else` block in your code, checking for this case.
+
+But what about truly malformed responses, making most parser crazy:
+
+[source, shell]
+----
+❯ curl http://localhost:8080/fault/malformed
+curl: (56) Illegal or missing hexadecimal sequence in chunked-encoding
+
+❯ curl http://localhost:8080/fault/random
+lskdu018973t09sylgasjkfg1][]'./.sdlv%
+----
+
+So, you would need to validate the response format.
+
+There is one infamous fault you will see on any distributed system:
+
+[source, shell]
+----
+❯ curl http://localhost:8080/fault/reset
+curl: (56) Recv failure: Connection reset by peer
+----
+
+You are in the dark. 
+Something went wrong, but what?
+Is it the server, the network, something else?
+Was it because someone used a microwave close to your router, and it suddenly disrupts the Wi-Fi signals?
+And, was your request handled by the server or not?
+Can you safely retry? 
+Maybe yes, the request may have been handled, perhaps the server is perfectly fine. 
+
+And here we are: Alone in the Dark[footnote: https://en.wikipedia.org/wiki/Alone_in_the_Dark].
 
 
 == Data consistency &amp; transactions
