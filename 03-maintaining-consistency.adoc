@@ -1,10 +1,30 @@
 = Maintaining (eventual) consistency
 
+We've seen so far that we likely need to deal with eventual consistency at some point in our systems.
+Now, how to make this happen, how to build eventual consistent scenarios, that are _reliable_, that is that they guarantee to be consistent in the long run?
 
-== distributed business use case transactions
 
-- splitting long-running transactions into smaller parts
-- Sagas
+== Distributed business use case transactions
+
+Unlike distributed transactions that try to talk to every involved system of our use case at once, we can build up distributed (business) use cases.
+How this works is that we split bigger, longer-running transactions into smaller parts, on a use case level already.
+We need to ensure, however, that all parts of the split use case are themselves _reliable_.
+
+// TODO sequence diagram that shows the differences?
+
+So, in the example of the coffee ordering use case, instead of waiting for a single response that tells us whether we'll get our coffee, the coffee shop will perform that handling in multiple, individual steps.
+First, the customer would order their favorite coffee, and the clerk would simply _accept_ the order, in case it's generally valid, of course.
+Now, the order is in the system, reliably, and we promise that we get back to the customer at some point, while we're confident, but not certain that the order will be fulfilled.
+The customer is then free to move around the shop, seat at a table, or use their smartphone.
+The order that has been tentatively accepted is then submitted to, let's say a barista "`system`" who attempts to brew the coffee.
+Whether or not the order can be fulfilled, we will see an update at some point, and usually the customer would be notified with the outcome.
+
+In this case we're always dealing with some degree of uncertainty, not knowing whether we'll be able to walk out of the shop with a coffee in our hands, but it's important to ensure that the system is reliable.
+It's great if we get the coffee, is not that great but acceptable if we get a substitute in case our favorite choice is not available, however, it's not ok to not hear at all.
+If the customer waits for half an hour only to hear, when inquiring, that their order has been forgotten, that is it was lost in the system, they would be rather unpleased.
+In other words, we must not lose any data nor actions, and we must deal with all possible situations.
+
+// introduce notation of Sagas
 
 
 == not losing actions or state

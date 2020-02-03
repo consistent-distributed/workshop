@@ -1,29 +1,76 @@
 = Motivation for asynchronous communication and eventual consistency
 
-Contents: From what has been discussed in the previous part, make people aware of the driving forces behind asynchronous communication and eventual consistency.
+From what we have seen the previous part, there are some driving forces behind asynchronous communication and eventual consistency.
 
 
 == Distributed system, distributed transactions
 
-As we have seen, communication within distributed systems can be a motivation to loosen up consistency requirements.
+Communication within distributed systems can be a motivation to loosen up consistency requirements.
 Systems, that as part of handling their use case need to involve multiple applications, may motivate us to give up strong consistency requirements in favor of availability.
+
+----
+┌──────┐       ┌────────┐     .──.
+│client│<----->│system a│<--> │db│
+└──────┘       └────────┘┌    └──┘
+                          \  ┌────────┐
+                           ┘ │system b│
+                             └────────┘
+----
+
+In this diagram, the _client_ connects to _system a_, to perform a specific use case.
+To do that _system a_ involves a database as well as _system b_, which, in order to make the use case consistent would naïvely be involved in a transactional manner, that is using a distributed transaction.
+Since we have seen that distributed transactions and especially 2-phase-commits are not the best solution, we would rather choose to loosen up the consistency requirements.
+For example, the _system a_ could first persist the required data of the use case action into the database, return a successful response to the _client_, that indicates that the use case action was only accepted but not fully completed yet.
+Afterwards, asynchronously, _system a_ would connect to _system b_ to finish the use case, however, in an also reliable way, that is handling faults correctly and potentially retrying the communication.
+Once that happened the use case result could be updated.
 
 
 == Data growth
 
 If the data and usage of applications grow, it might not be able to fit into a single database instance, anymore, which causes us to scale databases horizontally.
-We can scale our instances by partitioning, or sharding the data, by certain criteria and store the parts in the available instances.
-It helps to look at the exact data growth of the application over time, that is how fast the overall storage size of the data grows, which allows us to calculate the future storage demands.
+We can scale our instances by partitioning, or sharding the data, by certain criteria and storing the parts in the available instances.
+
+We need to assess the exact data growth of the application over time, that is how fast the overall storage size of the data grows, which allows us to calculate the future storage demands.
+If, for example, we noticed that our database storage has increased by 1 TB after one year of production usage, we're dealing with an approximate data growth of 2.81 GB / day.
+This gives an idea how long the machines might be able to cope with the growth demands.
 
 
 == Scalability, on database side
 
-- requirement to provision multiple database instances to accommodate load
-- need to scale databases
+We're often talking about scalability on the application side, in order to handle more load.
+It's common to provision multiple instances of backends, which are usually load balanced by a reverse proxy or API gateway upfront.
+However, in most cases, the scalability limitations lay not on the application- but on the database-side.
+If multiple application instances connect to the same database instances, to guarantee consistency across the servers, we can more likely run into the situation, that the database instances are not sufficient to handle an increased load.
+
+In this case, we're facing a similar situation, that we need to scale the database instances, by introducing multiple database replicas.
+However, here we have the same challenge of how to consistently handle changes in the system, in other words, how to consistently and reliably letting other instances know that some data has been changed.
+
+To accommodate this situation, we again choose in favor of eventual consistency to maintain availability.
+This causes that the whole system would not see an consistent state of all data the whole time, however, we can make sure that the state is consistent _eventually_, at some point.
 
 
-== connection to real world (collaboration required, trust on outdated information, compensating use cases)
+== Connection to real world (collaboration required, trust on outdated information, compensating use cases)
 
-- explanation how the real world is eventually consistent
-- coffee shop example, ordering coffee while shop runs out of beans, time it takes until that information propagates
-- building systems that solve real-world use cases might also require to take into account eventual consistency
+If we make the connection to the real world, which ultimately our systems should be built for, we easily see that the real world is full of eventual consistent use cases.
+
+Take ordering a coffee at a coffee shop, for example.
+If we go to the counter, order a cup of our favorite coffee bean origins[footnote: Notice that in some selected coffee shops you have the choice of the origin of your coffee beans, be it Colombia, Ethiopia, or Java, for example], the friendly person behind the counter takes your order and promises that your drink will be ready in a second.
+Now you might think that this was a consistent transaction, but actually it's not.
+A lot of things can go wrong until you might get your coffee.
+If in just this moment, the coffee shop ran out of your selected beans, the clerk still accepted your order, unaware of the bean situation.
+Situations like these, unfortunately, happen all the time.
+
+The way how we cope with this in the real world is with communication and compensating use cases.
+We have to talk to each other.
+The clerk would come back to you, apologizing that they won't be able to fulfil the order and most likely would offer an alternative drink or solution, maybe even a discount.
+From a whole system's perspective this is highly inconsistent, but you as a customer might appreciate the courtesy.
+
+On the contrary, in a fully consistent system that deals with coffee orders, the communication to the clerk would need to _block_, equal to shouting "`nobody moves!`" and would make you actively wait until you get the answer, whether the coffee order is possible, while you would be handed the cup of coffee simultaneously while handing the money over the counter, to fulfill the requirements of the distributed transaction.
+While doing so, nobody else in the coffee shop would be allowed to operate anything related to coffee.
+
+Since this sounds rather comical, we are dealing with the eventual consistency.
+In our case, the clerk does their best to accommodate orders and make the customers happy.
+However, for the next person, they will be told that this type of coffee beans is currently not available, even if in the very moment the delivery truck brings new beans.
+Again, a case of not being fully consistent if we look at the system as a whole.
+
+Now, since we're building system that are potentially meant to handle real-world use cases, we need to consider eventual consistency and compensating use cases.
